@@ -1,38 +1,29 @@
-<div class="content">
-    <!-- Tela 1: Início -->
-    <section id="tela1" class="tela">
-        <h1>Bem-vindo ao CAR em Dia</h1>
-        <p>Escolha sua jornada para simplificar o Cadastro Ambiental Rural:</p>
-        <button class="btn-primary" onclick="mostrarTela('tela2')">Iniciar Nova Jornada</button>
-    </section>
+// Garantir que o mapa só inicie quando a página carregar totalmente
+window.onload = function() {
+    window.map = L.map('map').setView([-15.78, -47.92], 4);
+    L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+        subdomains:['mt0','mt1','mt2','mt3'],
+        attribution: 'Google'
+    }).addTo(window.map);
+};
 
-    <!-- Tela 2: Dados -->
-    <section id="tela2" class="tela" style="display:none;">
-        <h1>Dados do Imóvel</h1>
-        <input type="text" placeholder="Nome do Imóvel">
-        <input type="text" placeholder="Município">
-        <button class="btn-primary" onclick="mostrarTela('tela3')">Avançar para o Mapa</button>
-    </section>
+function irPara(id) {
+    document.querySelectorAll('.tela').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    
+    // Força o mapa a se ajustar ao tamanho da tela quando a tela 3 for exibida
+    if(id === 'tela3' && window.map) {
+        setTimeout(() => { window.map.invalidateSize(); }, 200);
+    }
+}
 
-    <!-- Tela 3: Mapa -->
-    <section id="tela3" class="tela" style="display:none;">
-        <h1>Mapa Guiado</h1>
-        <div class="mapa-placeholder">Simulação de mapa geoespacial aqui</div>
-        <button class="btn-primary" onclick="mostrarTela('tela4')">Validar Dados</button>
-    </section>
+function buscarCoordenadas() {
+    const lat = document.getElementById('lat').value;
+    const lng = document.getElementById('lng').value;
+    if(lat && lng) window.map.setView([parseFloat(lat), parseFloat(lng)], 15);
+}
 
-    <!-- Tela 4: Validação -->
-    <section id="tela4" class="tela" style="display:none;">
-        <h1>Pré-validação</h1>
-        <div class="semaforo">🟡 Atenção: Pendências detectadas</div>
-        <p>Termos técnicos simplificados e alertas de APP/RL.</p>
-        <button class="btn-primary" onclick="mostrarTela('tela5')">Gerar Dossiê</button>
-    </section>
-
-    <!-- Tela 5: Dossiê -->
-    <section id="tela5" class="tela" style="display:none;">
-        <h1>Dossiê Final</h1>
-        <p>Relatório gerado com sucesso para seu apoio técnico.</p>
-        <button class="btn-primary" onclick="window.print()">Salvar/Imprimir PDF</button>
-    </section>
-</div>
+function analisarComIA() {
+    event.target.innerText = "Analisando...";
+    setTimeout(() => { irPara('tela4'); }, 1500);
+}
